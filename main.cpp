@@ -2,7 +2,7 @@
 /*
   COMSC-210 Data Structures
   Lab 32: Toll Booth Simulation
-  Milestone 1
+  Milestone 2
 */
 
 #include <iostream>
@@ -15,35 +15,67 @@ using namespace std;
 
 const int INITIAL_CARS = 2;
 
-int main() {
-    srand(static_cast<unsigned int>(time(nullptr)));
+// Display all cars currently waiting in line
+void displayQueue(deque<Car> &tollLane) {
+    cout << "Queue:\n";
 
-    // Create a deque to hold Car objects
-    deque<Car> tollLane;
-
-    // Add two cars to the toll booth lane
-    for (int i = 0; i < INITIAL_CARS; i++) {
-        Car newCar;
-        tollLane.push_back(newCar);
+    if (tollLane.empty()) {
+        cout << "    Empty\n";
+        return;
     }
-
-    // Display the initial queue
-    cout << "Initial queue:\n";
 
     for (Car &car : tollLane) {
         cout << "    ";
         car.print();
     }
+}
 
-    // Access the first car in line
-    if (!tollLane.empty()) {
-        cout << "\nFirst car in line:\n    ";
-        tollLane.front().print();
+int main() {
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    // Create the toll booth lane
+    deque<Car> tollLane;
+
+    // Start with two cars
+    for (int i = 0; i < INITIAL_CARS; i++) {
+        Car newCar;
+        tollLane.push_back(newCar);
     }
 
-    // Display the number of cars waiting
-    cout << "\nCars waiting: "
-         << tollLane.size() << endl;
+    cout << "Initial queue:\n";
+    for (Car &car : tollLane) {
+        cout << "    ";
+        car.print();
+    }
+
+    int timePeriod = 0;
+
+    // Keep running until the line is empty
+    while (!tollLane.empty()) {
+        timePeriod++;
+
+        // Random number from 1 to 100
+        int chance = rand() % 100 + 1;
+
+        cout << "\nTime: " << timePeriod << " Operation: ";
+
+        if (chance <= 55) {
+            // 55% probability: first car pays and leaves
+            cout << "Car paid: ";
+            tollLane.front().print();
+            tollLane.pop_front();
+        } else {
+            // 45% probability: a new car joins
+            Car newCar;
+            tollLane.push_back(newCar);
+
+            cout << "Joined lane: ";
+            tollLane.back().print();
+        }
+
+        // Display the queue after every time period
+        displayQueue(tollLane);
+    }
 
     return 0;
 }
